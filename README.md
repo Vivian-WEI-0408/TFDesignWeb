@@ -5,10 +5,12 @@
 <p>2.依赖 pip install -r requirements.txt</p>
 <p>3.启动</p>
 
-    $ cd WebPlot
+    $ cd WebPlot/GUI
 
     $ bokeh serve --show Plot.py --allow-websocket-origin="*"
     
+    $cd ..
+
     $ python main.py
 
 <h3>Data Access</h3>
