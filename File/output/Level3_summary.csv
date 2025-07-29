@@ -1,0 +1,2 @@
+assembly_name,construct_id,assembly_level,construct_size,number_of_parts,depends_on,enzymes,used_in,parts
+Level3,Level3,1,7114,2,,BbsI,,CY1809 & Level2

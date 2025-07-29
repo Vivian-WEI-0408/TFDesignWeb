@@ -1,0 +1,17 @@
+LOCUS       TER25                    317 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   TER25
+VERSION     TER25
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcataa aagcttttga ttaagccttc tagtccaaaa aacacgtttt tttgtcattt
+       61 atttcatttt cttagaatag tttagtttat tcattttata gtcacgaatg ttttatgatt
+      121 ctatataggg ttgcaaacaa gcatttttca ttttatgtta aaacaatttc aggtttacct
+      181 tttattctgc ttgtggtgac gcgtgtatcc gcccgctctt ttggtcaccc atgtatttaa
+      241 ttgcataaat aattcttaaa agtggagcta gtctatttct atttacatac ctctcatttc
+      301 tcatttcctc tgagacc
+//

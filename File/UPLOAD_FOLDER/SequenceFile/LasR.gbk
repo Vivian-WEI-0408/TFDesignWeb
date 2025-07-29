@@ -1,0 +1,21 @@
+LOCUS       LasR                     550 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   LasR
+VERSION     LasR
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcatat cgccttggtt gacggttttc ttgagctgga acgctcaagt ggaaaattgg
+       61 agtggagcgc catcctgcag aagatggcga gcgaccttgg attctcgaag atcctgttcg
+      121 gcctgttgcc taaggacagc caggactacg agaacgcctt catcgtcggc aactacccgg
+      181 ccgcctggcg cgagcattac gaccgggctg gctacgcgcg ggtcgacccg acggtcagtc
+      241 actgtaccca gagcgtactg ccgattttct gggaaccgtc catctaccag acgcgaaagc
+      301 agcacgagtt cttcgaggaa gcctcggccg ccggcctggt gtatgggctg accatgccgc
+      361 tgcatggtgc tcgcggcgaa ctcggcgcgc tgagcctcag cgtggaagcg gaaaaccggg
+      421 ccgaggccaa ccgtttcatg gagtcggtcc tgccgaccct gtggatgctc aaggactacg
+      481 cactgcagag cggtgccgga ctggccttcg aacatccggt cagcaaaccg gtggttctgg
+      541 gtaggagacc
+//

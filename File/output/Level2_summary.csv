@@ -1,0 +1,2 @@
+assembly_name,construct_id,assembly_level,construct_size,number_of_parts,depends_on,enzymes,used_in,parts
+Level2,Level2,1,6774,6,,BsaI,,CY571 & Temp-264 & CI & LasR & AD & TER25

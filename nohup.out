@@ -1,0 +1,107 @@
+ERROR: Path for Bokeh server application does not exist: /home/wby/Desktop/WebPlot/Plot.py
+ERROR: Path for Bokeh server application does not exist: /home/wby/Desktop/WebPlot/Plot.py
+ERROR: Path for Bokeh server application does not exist: /home/wby/Desktop/WebPlot/Plot.py
+2024-03-14 14:48:39,331 Starting Bokeh server version 3.3.0 (running on Tornado 6.3.3)
+2024-03-14 14:48:39,359 Host wildcard '*' will allow connections originating from multiple (or possibly all) hostnames or IPs. Use non-wildcard values to restrict access explicitly
+2024-03-14 14:48:39,361 User authentication hooks NOT provided (default user enabled)
+2024-03-14 14:48:39,370 Bokeh app running at: http://localhost:5006/Plot
+2024-03-14 14:48:39,370 Starting Bokeh server with process id: 7020
+2024-03-14 14:48:50,020 WebSocket connection opened
+2024-03-14 14:48:50,020 ServerConnection created
+2024-03-14 14:48:53,704 WebSocket connection closed: code=1001, reason=None
+ * Serving Flask app 'temp'
+ * Debug mode: on
+Cannot assign requested address
+ * Serving Flask app 'temp'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://10.30.76.11:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 104-667-906
+10.30.76.11 - - [14/Mar/2024 14:45:13] "[35m[1mGET /TFPlot HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 2552, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 2532, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 2529, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/wby/.conda/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/wby/Desktop/WebPlot/temp.py", line 16, in bkapp_page
+    with pull_session(url="http://localhost:5006/Plot") as session:
+  File "/home/wby/.conda/lib/python3.9/site-packages/bokeh/client/session.py", line 142, in pull_session
+    session.pull()
+  File "/home/wby/.conda/lib/python3.9/site-packages/bokeh/client/session.py", line 424, in pull
+    self.check_connection_errors()
+  File "/home/wby/.conda/lib/python3.9/site-packages/bokeh/client/session.py", line 411, in check_connection_errors
+    raise OSError(f"We received an HTTP-Error. Disconnected with error code: {self.error_code}, given message: {self.error_detail}")
+OSError: We received an HTTP-Error. Disconnected with error code: 599, given message: Timeout during request
+10.30.76.11 - - [14/Mar/2024 14:45:13] "[36mGET /TFPlot?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+10.30.76.11 - - [14/Mar/2024 14:45:13] "[36mGET /TFPlot?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+10.30.76.11 - - [14/Mar/2024 14:45:14] "[36mGET /TFPlot?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+10.30.76.11 - - [14/Mar/2024 14:45:14] "[36mGET /TFPlot?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+ * Detected change in '/home/wby/Desktop/WebPlot/temp.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 104-667-906
+2025-07-16 11:15:26,887 Starting Bokeh server version 3.7.3 (running on Tornado 6.5.1)
+2025-07-16 11:15:26,887 Host wildcard '*' will allow connections originating from multiple (or possibly all) hostnames or IPs. Use non-wildcard values to restrict access explicitly
+2025-07-16 11:15:26,887 User authentication hooks NOT provided (default user enabled)
+2025-07-16 11:15:26,896 Bokeh app running at: http://localhost:5006/Plot
+2025-07-16 11:15:26,897 Starting Bokeh server with process id: 891981
+2025-07-16 11:15:29,239 WebSocket connection opened
+2025-07-16 11:15:29,239 ServerConnection created
+2025-07-16 11:17:52,769 404 GET /.well-known/appspecific/com.chrome.devtools.json (::1) 0.33ms
+2025-07-16 11:23:09,161 404 GET /.well-known/appspecific/com.chrome.devtools.json (::1) 0.20ms
+2025-07-16 11:23:09,701 WebSocket connection opened
+2025-07-16 11:23:09,701 ServerConnection created
+2025-07-16 11:29:02,584 WebSocket connection opened
+2025-07-16 11:29:02,627 ServerConnection created
+2025-07-16 11:29:02,775 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 11:29:04,751 WebSocket connection opened
+2025-07-16 11:29:04,751 ServerConnection created
+2025-07-16 11:29:19,270 WebSocket connection opened
+2025-07-16 11:29:19,310 ServerConnection created
+2025-07-16 11:29:19,439 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 12:11:05,201 WebSocket connection opened
+2025-07-16 12:11:05,484 ServerConnection created
+2025-07-16 12:11:05,608 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 12:11:08,025 WebSocket connection opened
+2025-07-16 12:11:08,025 ServerConnection created
+2025-07-16 12:11:15,275 WebSocket connection closed: code=1001, reason=None
+2025-07-16 12:14:46,024 WebSocket connection closed: code=None, reason=None
+2025-07-16 12:15:43,163 WebSocket connection opened
+2025-07-16 12:15:43,200 ServerConnection created
+2025-07-16 12:15:43,325 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 12:15:44,581 WebSocket connection opened
+2025-07-16 12:15:44,582 ServerConnection created
+2025-07-16 12:15:46,103 WebSocket connection closed: code=1001, reason=None
+2025-07-16 14:16:59,254 WebSocket connection opened
+2025-07-16 14:16:59,305 ServerConnection created
+2025-07-16 14:16:59,439 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 14:16:59,731 WebSocket connection opened
+2025-07-16 14:16:59,731 ServerConnection created
+2025-07-16 14:17:05,495 WebSocket connection opened
+2025-07-16 14:17:05,535 ServerConnection created
+2025-07-16 14:17:05,661 WebSocket connection closed: code=1000, reason='closed'
+2025-07-16 14:17:24,753 WebSocket connection closed: code=1001, reason=None
+2025-07-16 14:18:04,675 WebSocket connection closed: code=None, reason=None
+2025-07-16 14:18:04,675 WebSocket connection closed: code=None, reason=None
+2025-07-16 16:24:58,972 WebSocket connection opened
+2025-07-16 16:24:58,972 Uncaught exception GET /Plot/ws (10.30.76.2)
+HTTPServerRequest(protocol='http', host='10.30.76.75:5006', method='GET', uri='/Plot/ws', version='HTTP/1.1', remote_ip='10.30.76.2')
+Traceback (most recent call last):
+  File "/home/database/anaconda3/envs/DNAWorks/lib/python3.10/site-packages/tornado/websocket.py", line 965, in _accept_connection
+    open_result = handler.open(*handler.open_args, **handler.open_kwargs)
+  File "/home/database/anaconda3/envs/DNAWorks/lib/python3.10/site-packages/tornado/web.py", line 3375, in wrapper
+    return method(self, *args, **kwargs)
+  File "/home/database/anaconda3/envs/DNAWorks/lib/python3.10/site-packages/bokeh/server/views/ws.py", line 149, in open
+    raise ProtocolError("Token is expired. Configure the app with a larger value for --session-token-expiration if necessary")
+bokeh.protocol.exceptions.ProtocolError: Token is expired. Configure the app with a larger value for --session-token-expiration if necessary

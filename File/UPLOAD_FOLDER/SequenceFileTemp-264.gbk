@@ -1,0 +1,21 @@
+LOCUS       Temp-264                 551 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   Temp-264
+VERSION     Temp-264
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcattt ttctgtttat ccgtcatatt ccctatattc atatttattc tgagtcttgt
+       61 tacaatttct tcaagaaacc gatccttatt taacctactg tatttagaaa gtaaataaat
+      121 aaactaaaat caaagcaaaa ataattttat acactattct tatttttatt ttttaatttt
+      181 taattttttt ataagggagc acaagtatac agacggaaaa gggattaggc tttttttatg
+      241 cgctctgtct agtactgttt tcttttacat ccgtacatac tcttagaccc atacagcgca
+      301 tgtattcttg ttttcgactt ttttttggtt ttttttttag ttctgtaagg acaaagaaaa
+      361 atggtcgcta gccgcgctcg ggaaaaccag cgatattctc aatgtaggaa gtctaccatt
+      421 ttccctttag gctttgccat aatctctgga tacatacaat ttcagaatat ttcaatactg
+      481 catatttcaa gattcaaccc attattttat aacatttttc attcaatatt caagaacccc
+      541 aatgtgagac c
+//

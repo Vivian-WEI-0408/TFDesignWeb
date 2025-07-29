@@ -1,0 +1,21 @@
+LOCUS       BjaR                     559 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   BjaR
+VERSION     BjaR
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcatat cagtgcggtg gattatggcc gtgaagccct ggactttatc gaaggcctgg
+       61 gtgtctaccg caaagtgccg gatgctatga acgcgctgga agcggccttt ggccgttttg
+      121 gtttcgaaac cattatcgtc acgggcctgc cgaacccgga tcagcgtttc gctcaaatgg
+      181 tgctggcaaa acgttggccg gccggttggt ttaatctgta tacccagaac aattacgatc
+      241 gtttcgaccc ggtggttcgt ctgtgccgcc aaagtgttaa cccgtttgaa tggtccgaag
+      301 ccccgtatga tgcagaactg gaaccgagcg cagctgaagt tatgaatcgc gcaggcgact
+      361 ttcgtatgtc tcgcggtttc attgtcccga tccatggcct gaccggttac gaagcggccg
+      421 tttcactggg cggtgtccac ctggatctga atccgcgttc gaaaccggca ctgcatctga
+      481 tggctatgta tggcttcgac cacatccgtc gcctgctgga accgacgccg tacccgtcca
+      541 cccgtctggg taggagacc
+//

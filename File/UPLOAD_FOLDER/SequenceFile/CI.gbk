@@ -1,0 +1,17 @@
+LOCUS       CI                       312 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   CI
+VERSION     CI
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcaaat gtctacaaaa aaaaagcccc tgacccaaga acaacttgag gacgctcgtc
+       61 gtttgaaggc catttacgaa aagaagaaga acgaacttgg attgagccag gagtcagtag
+      121 ctgacaagat ggggatgggg caatctggtg tcggtgcctt gtttaatggt attaacgcct
+      181 taaacgccta taacgccgcg ctgttggcta aaatcctaaa ggtatctgta gaagagttta
+      241 gtccatcaat agcccgtgag atctacgaga tgtacgaggc cgtttccatg ggttctaagg
+      301 atatcggaga cc
+//

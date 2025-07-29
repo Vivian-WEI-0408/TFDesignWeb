@@ -1,0 +1,20 @@
+LOCUS       AD                       516 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   AD
+VERSION     AD
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcaggt agccctaaga aaaagagaaa agtgggtggc agtggcggaa gcgggggatc
+       61 aggtggttct ggagggtccg atatcatgca ggatctgccg ggcaacgata acagcaccgc
+      121 gggcgcgcgt acgaaaaaca attacgggtc taccatcgag ggcctgctcg atctcccgga
+      181 cgacgacgcc cccgaagagg cggggctggc ggctccgcgc ctgtcctttc tccccgcggg
+      241 acacacgcgc agactgtcga cggccccccc gaccgatgtc agcctggggg acgaattgca
+      301 cttagacggc gaggacgtgg cgatggcgca tgccgacgcg ctagacgatt tcgatctgga
+      361 catgttgggg gacggggatt ccccgggtcc gggatttacc ccccacgact ccgcccccta
+      421 cggcgctctg gatatggccg acttcgagtt tgagcagatg tttaccgatg cccttggaat
+      481 tgacgagtac ggtgggaagc tttaataaag gagacc
+//

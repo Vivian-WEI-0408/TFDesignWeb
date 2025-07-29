@@ -1,0 +1,13 @@
+LOCUS       TER75                    116 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  for WebAssembly.
+ACCESSION   TER75
+VERSION     TER75
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 ggtctcataa aagaaggaag atgacgcacg atatatatac gaccctatat atatatataa
+       61 tatgatattc ttttatgaac aaactttctt ttttttttct tcgttcctct gagacc
+//

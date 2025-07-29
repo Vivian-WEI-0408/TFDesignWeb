@@ -1,0 +1,314 @@
+import numpy as np
+from bokeh.io import curdoc
+from bokeh.models import Row,Column,widgets,ColumnDataSource,Slider,InlineStyleSheet
+from bokeh.plotting import figure
+from Entity.DBD import GetDBDMenu,GetDBDNameList
+from Entity.LBD import GetLBDDimerMenu,GetLBDNRMenu,GetLBDDimerNameList,GetLBDNRNameList
+import SupportSql.DA
+
+
+#下游启动子输出
+def DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0):
+    x1 = np.sqrt((k2*I+1)*(k2*I+1)+ 8 * L * (k2*k2*k3*I*I + k1))
+    P1=(Imax * ((L / 2) * (((x1 - (k2*I+1)) / (x1 + (k2*I+1))) * kd) / (1 + (L / 2) * ((x1 - (k2*I+1)) / (x1 + (k2*I+1))) * kd)) + I0)
+    return P1
+
+#I 是诱导剂浓度
+def NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0):
+    x1 = np.sqrt((k2*I+kx1+kx2*k2*I+1)*(k2*I+kx1+kx2*k2*I+1)+ 8 * L * (k2*k2*k3*I*I + k1+k1*kx1*kx1+k3*k2*k2*kx2*kx2*I*I))
+    P1 = (Imax * ((L / 2) * ((x1 - (k2*I+kx1+kx2*k2*I+1)) / (x1 + (k2*I+kx1+kx2*k2*I+1))) * kd / (1 + (L / 2) * ((x1 - (k2*I+kx1+kx2*k2*I+1)) / (x1 + (k2*I+kx1+kx2*k2*I+1))) *kd)) + I0)
+    return P1
+
+
+def ReadExcel(Type,cur):
+    if(Type == "LBDDimer"):
+        return GetLBDDimerMenu(cur)
+    elif(Type == "LBDNR"):
+        return GetLBDNRMenu(cur)
+    elif(Type == "DBD"):
+        return GetDBDMenu(cur)
+
+def GetNameList(Type,cur):
+    if(Type == "LBDDimer"):
+        return GetLBDDimerNameList(cur)
+    elif(Type == "LBDNR"):
+        return GetLBDNRNameList(cur)
+    elif(Type == "DBD"):
+        return GetDBDNameList(cur)
+
+
+def update_LBDDBDDimerData(attr,old,new):
+    print(new)
+    NewParameter = LBDDimerMenu[new]
+    k1 = NewParameter[0]
+    k2 = NewParameter[1]
+    k3 = NewParameter[2]
+    DBDParameter = DBDMenu[DBDSelect.value]
+    I0 = DBDParameter[0]
+    kd = DBDParameter[1]
+    I = np.logspace(-3,3,N)
+    L = LSlider.value
+    y1 = DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0)
+    source1.data = dict(Inducer = I, Output = y1)
+
+
+
+def update_LBDDBDNRData(attr,old,new):
+    NewParameter = LBDNRMenu[new]
+    k1 = NewParameter[0]
+    k2 = NewParameter[1]
+    k3 = NewParameter[2]
+    kx1 = NewParameter[3]
+    kx2 = NewParameter[4]
+    DBDParameter = DBDMenu[DBDSelect.value]
+    I0 = DBDParameter[0]
+    kd = DBDParameter[1]
+    I = np.logspace(-3,3,N)
+    L = LSlider.value
+    I = np.logspace(-3,3,N)
+    y2 = NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0)
+    source2.data = dict(Inducer = I, Output = y2)
+
+
+def update_DBDData(attr,old,new):
+    L = LSlider.value
+    print(LBDDimerSelect.value)
+    DBDParameter = DBDMenu[new]
+    I0 = DBDParameter[0]
+    kd = DBDParameter[1]
+    DimerParameter = LBDDimerMenu[str(LBDDimerSelect.value)]
+    NRParameter = LBDNRMenu[str(LBDNRSelect.value)]
+    k1 = DimerParameter[0]
+    k2 = DimerParameter[1]
+    k3 = DimerParameter[2]
+    I = np.logspace(-3,3,N)
+    y1 = DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0)
+    k1 = NRParameter[0]
+    k2 = NRParameter[1]
+    k3 = NRParameter[2]
+    kx1 = NRParameter[3]
+    kx2 = NRParameter[4]
+    y2 = NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0)
+    source1.data = dict(Inducer = I, Output = y1)
+    source2.data = dict(Inducer = I, Output = y2)
+
+
+def update_LSlider_data(attrname,old,new):
+    L = LSlider.value
+    DBDParameter = DBDMenu[DBDSelect.value]
+    I0 = DBDParameter[0]
+    kd = KdSlider.value
+    DimerParameter = LBDDimerMenu[LBDDimerSelect.value]
+    NRParameter = LBDNRMenu[LBDNRSelect.value]
+    k1 = DimerParameter[0]
+    k2 = DimerParameter[1]
+    k3 = DimerParameter[2]
+    I = np.logspace(-3,3,N)
+    y1 = DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0)
+    k1 = NRParameter[0]
+    k2 = NRParameter[1]
+    k3 = NRParameter[2]
+    kx1 = NRParameter[3]
+    kx2 = NRParameter[4]
+    L = LSlider.value
+    y2 = NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0)
+    source1.data = dict(Inducer = I, Output = y1)
+    source2.data = dict(Inducer = I, Output = y2)
+    
+
+def update_KdSlider_data(attrname,old,new):
+    L = LSlider.value
+    kd = KdSlider.value
+    DBDParameter = DBDMenu[DBDSelect.value]
+    I0 = DBDParameter[0]
+    DimerParameter = LBDDimerMenu[LBDDimerSelect.value]
+    NRParameter = LBDNRMenu[LBDNRSelect.value]
+    k1 = DimerParameter[0]
+    k2 = DimerParameter[1]
+    k3 = DimerParameter[2]
+    I = np.logspace(-3,3,N)
+    y1 = DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0)
+    k1 = NRParameter[0]
+    k2 = NRParameter[1]
+    k3 = NRParameter[2]
+    kx1 = NRParameter[3]
+    kx2 = NRParameter[4]
+    L = LSlider.value
+    y2 = NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0)
+    source1.data = dict(Inducer = I, Output = y1)
+    source2.data = dict(Inducer = I, Output = y2)
+
+
+
+DataAccess = SupportSql.DA.DA()
+LBDDimerMenu = ReadExcel("LBDDimer",DataAccess.GetCursor())
+LBDNRMenu = ReadExcel("LBDNR",DataAccess.GetCursor())
+DBDMenu = ReadExcel("DBD",DataAccess.GetCursor())
+# LBDDimerMenu = ReadExcel("LBDDimer",DataAccess.Ge
+stylesheet = InlineStyleSheet(css="""
+.title{
+    width:50%;
+    height:100%;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:16px;
+    margin:auto;
+    text-align:center;
+}
+.description{
+    width:80%;
+    margin:auto;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:14px;
+}
+.FooterClass{
+    width:100%
+}
+""")
+
+stylesheet2 = InlineStyleSheet(css="""
+.inputs{
+    border:1px solid black;
+    margin-left:30px;
+}
+.sliderpart{
+    margin-top:30px;
+}
+.plot{
+    margin-left:50px;
+}
+.LBDDBDContainerClass{
+    width:50%;
+    margin:auto;
+}
+""")
+
+
+
+stylesheet4 = InlineStyleSheet(css="""
+.content{
+    width:80%;
+    margin:auto;
+}
+.inputs{
+    border:1px solid black;
+    width:100%;
+}
+""")
+
+stylesheet5 = InlineStyleSheet(css = """
+.LBDContainerClass{
+    height:250px;
+    width:50%;
+    margin:auto;
+}
+.DBDContainerClass{
+    height:250px;
+    width:50%;
+    margin:auto;
+}
+""")
+
+stylesheet6 = InlineStyleSheet(css = """
+.bk-clearfix{
+    width:100%;
+}
+""")
+
+
+Title = widgets.Div(text="""
+<h1>TF Plot</h1>
+""")
+Description = widgets.Div(text="""
+<hr>
+<p>Use the figure below to explore how changes to the various parameter values. The Dimer module plot are colored in blue while the NR module plot are colored in pink.The figure was generated using the Bokeh plotting framework.</p>
+""")
+N=100
+k1 = 0.0000727
+k2 = 4.627521
+k3 = 0.693479
+kx1 = 0.65925
+kx2 = 3.65837
+L = 5
+Imax = 35.84932
+#假设为连续的
+kd = 6.216347694
+I0 = 0.01
+I = np.logspace(-3,3,N)
+y1 = DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0)
+y2 = NRModelCaculate(k1,k2,k3,kx1,kx2,I,L,Imax,kd,I0)
+source1 = ColumnDataSource(data = dict(Inducer = I, Output = y1))
+source2 = ColumnDataSource(data = dict(Inducer = I, Output = y2))
+
+
+TwinPlot = figure(height=300,width=300,title="Dimer Plot",
+              tools="crosshair,pan,reset,save,wheel_zoom",
+              x_axis_type = "log",
+              y_axis_type = "log",
+              x_range=[0.001,100],y_range=[0.01,100])
+TwinPlot.title.text_font_size = "16px"
+TwinPlot.line('Inducer','Output',source=source1,line_width=2,line_color = "#4D80E6")
+TwinPlot.css_classes = ["plot"]
+
+NRPlot = figure(height=300,width=300,title = "NR Plot",
+                tools="crosshair,pan,reset,save,wheel_zoom",x_axis_type="log",y_axis_type="log",x_range=[0.001,100],y_range=[0.01,100])
+NRPlot.title.text_font_size = "16px"
+NRPlot.line('Inducer','Output',source = source2,line_width=2,line_color = "#FA8072")
+
+LSlider = Slider(title='L',value=5,start=0,end=10,step=0.001,bar_color='rgb(115,143,193)')
+KdSlider = Slider(title='kd',value=6.216347694,start=0,end=41,step=0.001,bar_color='rgb(232,177,157)')
+
+DimerNameList = GetNameList("LBDDimer",DataAccess.GetCursor())
+NRNameList = GetNameList("LBDNR",DataAccess.GetCursor())
+DBDNameList = GetNameList("DBD",DataAccess.GetCursor())
+LBDDimerSelect = widgets.Select(title="Dimer LBD",value = DimerNameList[0],options=DimerNameList)
+LBDNRSelect = widgets.Select(title = "NR LBD",value = NRNameList[0],options=NRNameList)
+DBDSelect = widgets.Select(title = "DBD",value = DBDNameList[0],options=DBDNameList)
+
+LBDDimerSelect.on_change('value',update_LBDDBDDimerData)
+LBDNRSelect.on_change('value',update_LBDDBDNRData)
+DBDSelect.on_change('value',update_DBDData)
+
+LSlider.on_change('value',update_LSlider_data)
+KdSlider.on_change('value',update_KdSlider_data)
+LBDTitle = widgets.Div(text = """
+<h5> LBD Parameters </h5>
+""")
+DBDTitle = widgets.Div(text="""
+<h5> DBD Parameters </h5>
+""")
+#fixed
+LBDDimerContainer = Row(children = [LBDDimerSelect])
+LBDNRContainer = Row(children = [LBDNRSelect])
+LBDContainer = Column(children=[LBDTitle,LBDDimerContainer,LBDNRContainer])
+LBDContainer.css_classes = ["LBDContainerClass"]
+DBDContainer = Column(children=[DBDTitle,DBDSelect])
+DBDContainer.css_classes = ["DBDContainerClass"]
+LBDDBDContainer = Row(children=[LBDContainer,DBDContainer])
+LBDDBDContainer.css_classes = ["LBDDBDContainerClass"]
+LBDDBDContainer.stylesheets = [stylesheet5]
+
+
+
+# inputs = Column(children=[LSlider,KdSlider,LBDDBDContainer])
+SliderParts = Column(children=[LSlider,KdSlider])
+SliderParts.css_classes = ["sliderpart"]
+inputs = Row(children=[SliderParts,LBDDBDContainer])
+inputs.css_classes = ["inputs"]
+inputs.stylesheets = [stylesheet2]
+Title.css_classes = ["title"]
+Description.css_classes = ["description"]
+PlotRow = Row(children=[TwinPlot,NRPlot])
+ControllerRow = Column(children=[inputs,PlotRow])
+ControllerRow.stylesheets = [stylesheet4]
+ControllerRow.css_classes = ["content"]
+layout = Column(children = [Title,Description,
+                            ControllerRow,
+                           ])
+layout.stylesheets = [stylesheet,stylesheet2,stylesheet4]
+
+curdoc().title = "TF Plot"
+curdoc().add_root(layout)
+from bokeh.embed import server_document
+url = 'http://10.30.76.75:5006/Plot'
+script = server_document(url)
+# print(script)
