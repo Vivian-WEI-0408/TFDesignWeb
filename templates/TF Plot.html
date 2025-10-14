@@ -46,6 +46,33 @@
         background-color: gray;
         color: white;
       }
+      #LoadingMasterDiv{
+          text-align: center;
+      }
+      #LoadingDiv{
+          border:8px solid #f3f3f3;
+          border-top: 8px solid #3498db;
+          border-radius: 50%;
+          width:50px;
+          height:50px;
+          animation: spin 1s linear infinite;
+          margin:20px auto;
+      }
+      @keyframes spin{
+          0%{transform:rotate(0deg);}
+          100%{transform:rotate(360deg);}
+      }
+      table, th, td{
+            border: 1px solid black;
+        }
+        table{
+            margin-top: 20px;
+            width:100%;
+        }
+        th,td{
+            padding:15px;
+            text-align: center;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.0.min.js"></script>
@@ -78,7 +105,7 @@
       <p style="color:#545454;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin: auto;width:80%;font-size:14px;">Upload Part is used to upload experimental data file to fit the transcription factor parameters.The format of data file used to upload must be same as template.</p>
       <a href="{{url_for('DownloadTemplate')}}">Download Template Here</a>
       <hr>
-      <div style="width:60%;float:left;margin-left: 10%;margin-right: 10%;">
+      <div style="width:80%;float:left;margin-left: 10%;margin-right: 10%;margin-bottom:30px;">
         <div style="width:50%;float: left;">
           <form id="UploadSameForm" action="UploadData" method="POST" enctype="multipart/form-data">
             <label for="file_upload1" id="file_upload_label1">Upload Experimental Data File</label>
@@ -89,19 +116,62 @@
             <input type="submit" value="Submit" id="file_upload_button1">
           </form>
         </div>
-
-
-        
+        <div style="margin-bottom: 20px;">
+          <label id="selectAlgorithm" for="AlgorithmSelect">Algorithm: </label>
+          <select id="AlgorithmSelect">
+            <option value = "CNN">CNN</option>
+            <option value = "CurveFit">CurveFit</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label id="I0InputLabel" for="I0Input">I0: </label>
+          <input id="I0Input" type="number">
+        </div>
       </div>
       <div style="width:20%; float: right;">
         <button type="button" id="ParaFit">Fitting</button>
       </div>
+      <div id = "LoadingMasterDiv"></div>
     </div>
+    <br>
+    <div style="width:100%;margin-top:20px;" id = "ResultShowDiv"></div>
+    
     <script>
       $('#ParaFit').on('click',
         function(){
-          $.getJSON('/Fitting');
+          var algorithm = document.getElementById("AlgorithmSelect").value;
+          var I0 = document.getElementById("I0Input").value;
+          console.log(algorithm);
+            $.ajax({
+              url:'/Fitting',
+              type:"POST",
+              dataType:"json",
+              data: {Algorithm:algorithm,I0:I0},
+              beforeSend:function(){
+                document.getElementById("LoadingMasterDiv").innerHTML = "<div id='LoadingDiv'></div><div>Training...</div>";
+              },
+              success:function(response){
+                console.log("Success");
+                document.getElementById("LoadingMasterDiv").innerHTML = "";
+                refreshWindow(response.DBD,response.LBD);
+              },
+              error:function(error){
+                console.log("错误信息：",error);
+                document.getElementById("LoadingMasterDiv").innerHTML = "<div>Finish...</div>";
+              },
+            });
       });
+      function refreshWindow(DBD,LBD){
+        console.log(DBD,LBD);
+        fetch_str = "/FittingResult?DBD="+DBD+"&LBD="+LBD
+        fetch(fetch_str)
+        .then(response => response.text())
+        .then(html => {
+          console.log(html);
+          document.getElementById("ResultShowDiv").innerHTML = html;
+        })
+        .catch(error => alert("error"));
+      }
     </script>
     <script>
       // console.log("7777777777777");
@@ -168,6 +238,30 @@
         <div id = ParaPart style="width:50%;float:left;">
           <label>Optimization Parameters  </label>
           <br>
+          <div>
+            <input type="checkbox" id="isFixedLBD">
+            <label for = "isFixedLBD">select LBD</label>
+          </div>
+          <div id = "LBDSelectDiv">
+            <select id="LBDSelect">
+              <option value=""></option>
+              {% for LBD in LBDList%}
+              <option>{{LBD}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <input type="checkbox" id="isFixedDBD">
+            <label for = "isFixedLBD">select DBD</label>
+          </div>
+          <div id = "DBDSelectDiv">
+            <select id="DBDSelect">
+              <option value=""></option>
+              {% for DBD in DBDList%}
+              <option>{{DBD}}</option>
+              {% endfor %}
+            </select>
+          </div>
           <label for="alpha">α:</label>
           <input type = "number" id = "alpha" value = 1 required style="width : 30px;margin-left: 10px;">
           <br>
@@ -203,9 +297,38 @@
     </form>
     <hr>
     <script type = "text/javascript">
+      const toggleCheckbox = document.getElementById("isFixedLBD");
+      const selectContainer = document.getElementById("LBDSelectDiv");
+      const LBDSelect = document.getElementById("LBDSelect");
+      
+      toggleCheckbox.addEventListener('change',function(){
+        if(this.checked){
+          LBDSelect.disabled = false;
+        }
+        else{
+          LBDSelect.disabled = true;
+        }
+        
+      })
+
+
+      const toggleCheckbox2 = document.getElementById("isFixedDBD");
+      const selectContainer2 = document.getElementById("DBDSelectDiv");
+      const DBDSelect = document.getElementById("DBDSelect");
+      
+      toggleCheckbox2.addEventListener('change',function(){
+        if(this.checked){
+          DBDSelect.disabled = false;
+        }
+        else{
+          DBDSelect.disabled = true;
+        }
+      })
+
+
       $('#download').on('click',
       function(){
-        window.location.href="http://10.30.76.75:5000/Download";
+        window.location.href="http://10.30.76.75:8101/Download";
       }
     );
     </script>
@@ -225,7 +348,6 @@
           data: {LBD:LBD,DBD:DBD,L:L},
           success:function(response){
             alert("Finish Assembly");
-            console.log("Success");
           },
           error:function(error){
             console.log("错误信息：",error)
@@ -238,12 +360,20 @@
         function(){
             var alpha = $('#alpha').val();
             var beta = $('#beta').val();
+            var lbd = ""
+            var dbd = ""
+            if(document.getElementById("LBDSelect").disabled == false){
+              lbd = document.getElementById("LBDSelect").value;
+            }
+            if(document.getElementById("DBDSelect").disabled == false){
+              dbd = document.getElementById("DBDSelect").value;
+            }
         //发送Ajax请求到后端路由
             $.ajax({
                 url: '/Opt',
                 type: 'POST',
                 dataType: 'json',
-                data: {alpha:alpha,beta:beta},
+                data: {alpha:alpha,beta:beta,lbd:lbd,dbd:dbd},
                 success:function(response){
                   console.log(response.RPU.toFixed(1));
                   $('#OptimalDBD').text(response.DBD);

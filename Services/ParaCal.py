@@ -5,10 +5,11 @@
 #将Diff的K1，k2，k3作为静态变量
 #static
 import sameLBD
-import TFDesignWeb.Services.DiffLBD as DiffLBD
+import Services.DiffLBD as DiffLBD
 import pandas as pd
 from Entity import DBD,LBD
 from os import listdir
+import DiffLBDCurveFit
 # def EXCELAppend(Type,value):
     # file_path = '/T18/weiboyan/WebPlot/TFDatabase.xlsx'
     # df = pd.read_excel(file_path,sheet_name=Type,engine="openpyxl")
@@ -29,19 +30,24 @@ from os import listdir
     # writer.close()
     # # workbook.close()  
     # print(df)
-def GetKd(cur,DBDName):
-    return DBD.GetDBDKd(cur,DBDName)
+def GetKd(api_url,DBDName,session):
+    return DBD.GetDBDKd(api_url,DBDName,session)
 
-def AnalysisExcel(conn,cur):
-    # FileAddress = './UPLOAD_FOLDER/Data.csv'
-    folderAddress = r'./UPLOAD_FOLDER/Data'
-    files = listdir(folderAddress)
+
+# UploadFileList,algorithm,I0,Imax,app.config['api_url']
+def AnalysisExcel(UploadFileList, algorithm, I0, Imax, api_url,session):
+    # # FileAddress = './UPLOAD_FOLDER/Data.csv'
+    # folderAddress = r'WebPlot/UPLOAD_FOLDER/Data'
+    # files = listdir(folderAddress)
+    print(UploadFileList)
+    if(len(UploadFileList) == 0):
+        return
     dataframe = pd.DataFrame()
-    for file in files:
-        FileAddress = folderAddress + "/"+file
-        dataframe.append(pd.read_csv)
+    for file in UploadFileList:
+        # dataframe.append(pd.read_csv)
+        dataframe = pd.concat([dataframe,pd.read_csv(file)])
         # dataframepd.read_csv(FileAddress)
-    All_Data = pd.DataFrame(columns=['LBD','inducer','I0','Imax','RPU'])
+    All_Data = pd.DataFrame(columns=['LBD','inducer','RPU'])
     row = dataframe.shape[0]
     # print(All_Data)
     SperAllData = []
@@ -54,11 +60,14 @@ def AnalysisExcel(conn,cur):
     for DBDName in sameDBDData.groups:
         # print(DBDName)
         IndexList = sameDBDData.groups[DBDName].to_list()
-        PreData = pd.DataFrame(columns=['LBD','inducer','I0','Imax','RPU'])
+        PreData = pd.DataFrame(columns=['LBD','inducer','RPU'])
         for eachIndex in IndexList:
-            temp = dataframe.iloc[eachIndex,[2,3,5,6,4]]
+            temp = pd.Series()
+            temp = dataframe.iloc[eachIndex,[2,3,4]]
             All_Data.loc[len(All_Data.index)] = temp
             PreData.loc[len(PreData.index)] = temp
+
+
             # PreData = pd.concat([PreData,dataframe.iloc[eachIndex,[2,3,6,4]]])
             # PreData = pd.concat([PreData,pd.DataFrame(dataframe.iloc[eachIndex,:]['LBD','inducer','I0','RPU'])],ignore_index=True)
             # PreData = pd.concat([PreData,dataframe.iloc[eachIndex,['LBD','inducer','I0','RPU']]],ignore_index=True)
@@ -67,46 +76,97 @@ def AnalysisExcel(conn,cur):
     LBDData = dataframe[dataframe['DBDName'] == FixDBDName]
     sameLBDList = LBDData.groupby(["LBDName"])
     #kd从数据库中取
-    kd = float(GetKd(cur,FixDBDName))
+    # kd = float(GetKd(cur,FixDBDName))
     LBDNameList = list(sameLBDList.groups.keys())
-    SperLBDData = []
-    for LBDName in sameLBDList.groups:
-        IndexList = sameLBDList.groups[LBDName].to_list()
-        PreData = pd.DataFrame(columns=['LBD','inducer','RPU','I0','kd'])
-        for eachIndex in IndexList:
-            temp = dataframe.iloc[eachIndex,[2,3,4,5]]
-            temp['kd'] = kd
-            PreData.loc[len(PreData.index)] = temp
-        SperLBDData.append(PreData)
-    CalPara(All_Data,DBDNameList,SperAllData,LBDNameList,SperLBDData,conn,cur)
-    
-def CalPara(All_Data,DBDNameList,SperAllData,LBDNameList,SperLBDData,conn,cur):
+    # SperLBDData = []
+    # for LBDName in sameLBDList.groups:
+    #     IndexList = sameLBDList.groups[LBDName].to_list()
+    #     PreData = pd.DataFrame(columns=['LBD','inducer','RPU','I0','kd'])
+    #     for eachIndex in IndexList:
+    #         temp = dataframe.iloc[eachIndex,[2,3,4,5]]
+    #         # temp = float(GetKd())
+    #         PreData.loc[len(PreData.index)] = temp
+    #     SperLBDData.append(PreData)
+    # CalPara(All_Data,DBDNameList,SperAllData,LBDNameList,SperLBDData,conn,cur)
+    result = CalPara(algorithm,I0,Imax,All_Data,DBDNameList,SperAllData,LBDNameList,sameLBDList,dataframe,FixDBDName,api_url,session)
+    return result
+
+def CalPara(algorithm,I0,Imax,All_Data,DBDNameList,SperAllData,LBDNameList,sameLBDList,dataframe,FixDBDName,api_url,session):
     Name = "test"
-    model = sameLBD.MyModel ()
+    model = sameLBD.MyModel()
+    resultListLBD = []
+    resultListDBD = []
+    resultList = [resultListDBD,resultListLBD]
     #得到所有DBD的kd值
     #返回数据结构为[Name]:value
     Result = {}
-    Result = sameLBD.cal(model,All_Data,DBDNameList,SperAllData)
+    Result = sameLBD.cal(model,All_Data,DBDNameList,SperAllData,I0,Imax)
     #存入计算结果
     for eachkey in Result:
         dbd = DBD.DBD(eachkey["name"],"","","","","","","",eachkey["I0"],eachkey["kd"])
         #TODO: 传Mysql的参数
-        dbd.save(conn,cur)
+        dbd.save(api_url,session)
+        eachresult = {}
+        eachresult["name"] = eachkey["name"]
+        eachresult["I0"] = eachkey["I0"]
+        eachresult["kd"] = eachkey["kd"]
+        resultListDBD.append(eachresult)
     # print("kd:  {}".format(Result.kd.data))
     # print("k1:  {}".format(Result.k1.data))
     # print("k2:  {}".format(Result.k2.data))
     # print("k3:  {}".format(Result.k3.data))
-    index = 0
-    for eachLBDName in LBDNameList:
-        Result = DiffLBD.cal(eachLBDName,SperLBDData[index])
-        # k1 = Result[0]
-        # k2 = Result[1]
-        # k3 = Result[2]
-        # Dict = {"name":Name,"k1":k1,"k2":k2,"k3":k3,"I":1}
-        # EXCELAppend("LBDDimer",Dict)
-        lbddimer = LBD.LBDDimer(eachLBDName,"","","","","","","",Result[0],Result[1],Result[2],1)
-        lbddimer.save(conn,cur)
-        index+=1
-    return True
+
+
+    SperLBDData = []
+    for LBDName in sameLBDList.groups:
+        IndexList = sameLBDList.groups[LBDName].to_list()
+        PreData = pd.DataFrame(columns=['LBD','inducer','RPU','kd'])
+        for eachIndex in IndexList:
+            temp = pd.Series()
+            temp = dataframe.iloc[eachIndex,[2,3,4]]
+            tempKd = float(GetKd(api_url,FixDBDName,session))
+            temp['kd'] = tempKd
+            PreData.loc[len(PreData.index)] = temp
+            
+            
+        SperLBDData.append(PreData)
+
+
+    if(algorithm == "CNN"):
+        index = 0
+        for eachLBDName in LBDNameList:
+            Result = DiffLBD.cal(eachLBDName,SperLBDData[index],I0,Imax)
+            index += 1
+            lbddimer = LBD.LBDDimer(eachLBDName,"","","","","","","",Result[0],Result[1],Result[2],1)
+            lbddimer.save(api_url,session)
+            index+=1
+            eachresult = {}
+            eachresult["name"] = eachLBDName
+            eachresult["k1"] = Result[0]
+            eachresult["k2"] = Result[1]
+            eachresult["k3"] = Result[2]
+            eachresult["I"] = 1
+            resultListLBD.append(eachresult)
+            # k1 = Result[0]
+            # k2 = Result[1]
+            # k3 = Result[2]
+            # Dict = {"name":Name,"k1":k1,"k2":k2,"k3":k3,"I":1}
+            # EXCELAppend("LBDDimer",Dict)
+
+    else:
+        index = 0
+        for eachLBDName in LBDNameList:
+            Result = DiffLBDCurveFit.cal(eachLBDName,SperLBDData[index],I0,Imax)
+            index += 1
+            lbddimer = LBD.LBDDimer(eachLBDName,"","","","","","","",Result[0],Result[1],Result[2],1)
+            lbddimer.save(api_url,session)
+            eachresult = {}
+            eachresult["name"] = eachLBDName
+            eachresult["k1"] = Result[0]
+            eachresult["k2"] = Result[1]
+            eachresult["k3"] = Result[2]
+            eachresult["I"] = 1
+            resultListLBD.append(eachresult)
+    return resultList
 if __name__ == '__main__':
     AnalysisExcel()

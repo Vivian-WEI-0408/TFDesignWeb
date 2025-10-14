@@ -1,71 +1,85 @@
 from Entity import Part
-
+import requests
 
 #导入所有LBD Dimer
-def GetLBDDimerList(cur):
-    sql = "select pt.partid,pt.Name,pt.Alias,pt.Level0Sequence,pt.SourceOrganism,pt.Reference,pt.Note,pt.ConfirmedSequence,pt.InsertSequence,lbdt.k1,lbdt.k2,lbdt.k3,lbdt.I from PartTable as pt join LBDDimerTable as lbdt where lbdt.Name = pt.Name;"
-    cur.execute(sql)
-    result = cur.fetchall()
+def GetLBDDimerList(api_url,session):
+    response = session.get(f'{api_url}GetLBDDimer')
     LBDDimerList = []
-    for each in result:
-        lbddimer = LBDDimer(each[1],each[3],each[2],each[7],each[8],each[4],each[5],each[6],each[9],each[10],each[11],each[12])
-        LBDDimerList.append(lbddimer)
+    if(response.status_code == 200):
+        result = response.json()
+        for each in result:
+            LBDDimerList.append(LBDDimer(each['name'],each['level0sequence'],each['alias'],
+                                         each['confirmedsequence'],each['insertsequence'],each['sourceorganism'],
+                                         each['reference'],each['note'],each['k1'],each['k2'],each['k3'],each['i']))
     return LBDDimerList
 
-def GetLBDDimer(cur,Name):
-    sql = "select pt.partid,pt.Name,pt.Alias,pt.Level0Sequence,pt.SourceOrganism,pt.Reference,pt.Note,pt.ConfirmedSequence,pt.InsertSequence,lbdt.k1,lbdt.k2,lbdt.k3,lbdt.I from PartTable as pt join LBDDimerTable as lbdt where lbdt.Name = pt.Name and pt.Name = '"+Name+"';"
-    cur.execute(sql)
-    result = cur.fetchall()
-    for each in result:
-        lbddimer = LBDDimer(each[1],each[3],each[2],each[7],each[8],each[4],each[5],each[6],each[9],each[10],each[11],each[12])
-    return lbddimer
+
+def GetLBDDimer(api_url,Name,session):
+    response = session.get(f'{api_url}GetLBDDimerAllByName?name={Name}')
+    if(response.status_code == 200):
+        result = response.json()
+        lbddimer = LBDDimer(result['name'],result['level0sequence'],result['alias'],
+                                         result['confirmedsequence'],result['insertsequence'],result['sourceorganism'],
+                                         result['reference'],result['note'],result['k1'],result['k2'],result['k3'],result['i'])
+        return lbddimer
+    else:
+        return None
+
 
 
 #导入所有LBD NR
-def GetLBDNR(cur,Name):
-    sql = "select pt.partid,pt.Name,pt.Alias,pt.Level0Sequence,pt.SourceOrganism,pt.Reference,pt.Note,pt.ConfirmedSequence,pt.InsertSequence,lbdt.k1,lbdt.k2,lbdt.k3,lbdt.kx1, lbdt.kx2 from PartTable as pt join LBDNRTable as lbdt where lbdt.Name = pt.Name and pt.Name = '"+Name+"';"
-    cur.execute(sql)
-    result = cur.fetchall()
-    LBDNRList = []
-    for each in result:
-        lbdnr = LBDNR(each[1],each[3],each[2],each[7],each[8],each[4],each[5],each[6],each[9],each[10],each[11],each[12])
-    return lbdnr
-
-def GetLBDDimerMenu(cur):
-    sql = "select Name, k1,k2,k3,I from lbddimertable;"
+def GetLBDNR(api_url,Name,session):
+    response = session.get(f'{api_url}GetLBDAllByName?name={Name}')
+    if(response.status_code == 200):
+        result = response.json()
+        lbd = LBDNR(result['name'],result['level0sequence'],result['alias'],result['confirmedsequence'],
+                    result['insertsequence'],result['sourceorganism'],result['reference'],
+                    result['note'],result['k1'],result['k2'],result['k3'],result['kx1'],result['kx2'])
+        return lbd
+    else:
+        return None
+def GetLBDDimerMenu(api_url,session):
+    response = session.get(f'{api_url}GetLBDDimerMenu')
     LBDDimerMenu = {}
-    cur.execute(sql)
-    result = cur.fetchall()
-    for each in result:
-        LBDDimerMenu[each[0]] = [float(each[1]),float(each[2]),float(each[3]),float(each[4])]
-    return LBDDimerMenu
+    if(response.status_code == 200):
+        result = response.json()
+        for each in result:
+            LBDDimerMenu[each['name']] = [float(each['k1']),float(each['k2']),float(each['k3']),float(each['i'])]
+        return LBDDimerMenu
+    else:
+        return LBDDimerMenu
 
-def GetLBDNRMenu(cur):
-    sql = "select Name,k1,k2,k3,kx1,kx2 from lbdnrtable;"
+
+def GetLBDNRMenu(api_url,session):
+    response = session.get(f'{api_url}GetLBDNRMenu')
     LBDNRMenu = {}
-    cur.execute(sql)
-    result = cur.fetchall()
-    for each in result:
-        LBDNRMenu[each[0]] = [float(each[1]),float(each[2]),float(each[3]),float(each[4]),float(each[5])]
-    return LBDNRMenu
+    if(response.status_code == 200):
+        result = response.json()
+        for each in result:
+            LBDNRMenu[each['name']] = [float(each['k1']),float(each['k2']),float(each['k3']),float(each['kx1']),float(each['kx2'])]
+        return LBDNRMenu
+    else:
+        return LBDNRMenu
 
-def GetLBDDimerNameList(cur):
-    sql = "select Name from lbddimertable;"
-    LBDDimerNameList = []
-    cur.execute(sql)
-    result = cur.fetchall()
-    for each in result:
-        LBDDimerNameList.append(each[0])
-    return LBDDimerNameList
 
-def GetLBDNRNameList(cur):
-    sql = "select Name from lbdnrtable;"
-    LBDNRNameList = []
-    cur.execute(sql)
-    result = cur.fetchall()
-    for each in result:
-        LBDNRNameList.append(each[0])
-    return LBDNRNameList
+def GetLBDDimerNameList(api_url,session):
+    try:
+        response = session.get(f'{api_url}GetLBDDimerNameList')
+        if(response.status_code == 200):
+            return response.json()
+        else:
+            return None
+    except requests.exceptions.RequestException as e:
+        print(e)
+
+def GetLBDNRNameList(api_url,session):
+    response = session.get(f'{api_url}GetLBDNRNameList')
+    if(response.status_code == 200):
+        return response.json()
+    else:
+        return None
+
+
 
 
 
@@ -81,10 +95,9 @@ class LBDDimer(LBD):
         LBD.__init__(Name,Level0Sequence,Alias,ConfirmedSequence,InsertSequence,SourceOrganism,Reference,Note,k1,k2,k3)
         self.I = I
         self.Type = "LBD Dimer"
-    def save(self,conn,cur):
-        sql = "insert into LBDDimerTable (Name,k1,k2,k3,I) values ('"+self.Name+"',"+str(self.k1)+","+str(self.k2)+","+str(self.k3)+","+str(self.I)+");"
-        cur.execute(sql)
-        conn.commit()
+    def save(self,api_url,session):
+        newLBDDimer = {'data':{'Name':self.Name,'k1':self.k1,'k2':self.k2,'k3':self.k3,'I':self.I}}
+        response = session.post(f'{api_url}AddLBDDimer',data=newLBDDimer)
 
 class LBDNR(LBD):
     def __init__(self,Name,Level0Sequence,Alias,ConfirmedSequence,InsertSequence,SourceOrganism,Reference,Note,k1,k2,k3,kx1,kx2):
@@ -92,9 +105,7 @@ class LBDNR(LBD):
         self.kx1 = kx1
         self.kx2 = kx2
         self.Type = "LBD NR"
-    def save(self,conn,cur):
-        sql = "insert into LBDNRTable (Name,k1,k2,k3,kx1,kx2) values ('"+self.Name+"',"+str(self.k1)+","+str(self.k2)+","+str(self.k3)+","+str(self.kx1)+","+str(self.kx2)+");"
-        cur.execute(sql)
-        conn.commit()
-
+    def save(self,api_url,session):
+        newLBDNR = {'data':{'name':self.Name,'k1':self.k1,'k2':self.k2,'k3':self.k3,'kx1':self.kx1,'kx2':self.kx2}}
+        response = session.post(f'{api_url}AddLbdnr',data=newLBDNR)
 

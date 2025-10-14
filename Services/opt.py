@@ -2,6 +2,7 @@ import numpy as np
 import csv
 import pandas as pd
 from Entity import DBD,LBD
+import requests
 
 def foldchange1(L, kd,k1,k2,k3, Imax, I0, I,alpha,beta):
     x1 = np.sqrt((k2*I+1)*(k2*I+1)+ 8 * L * (k2*k2*k3*I*I + k1))
@@ -29,24 +30,24 @@ def foldchange2(L, kd,k1,k2,k3, Imax, I0, I):
     
     return P1
 
-def ReadExcelKdValue(cur):
-    Menu = DBD.GetDBDKdList(cur)
+def ReadExcelKdValue(api_url):
+    Menu = DBD.GetDBDKdList(api_url)
     return Menu
 
-def ReadExcelKdLabel(cur):
+def ReadExcelKdLabel(api_url):
     # file_path = r'WebPlot\TFDatabase.xlsx'
     # df = pd.read_excel(file_path,sheet_name="DBD")
     # Menu = []
     # length = len(df['name'])
     # for i in range(0,length):
     #     Menu.append(df.iloc[i,0])
-    Menu = DBD.GetDBDNameList(cur)  
+    Menu = DBD.GetDBDNameList(api_url)
     return Menu
 
-def ReadExcelLBDValue(cur):
+def ReadExcelLBDValue(api_url):
     # file_path = r'WebPlot\TFDatabase.xlsx'
     # df = pd.read_excel(file_path,sheet_name="LBDDimer")
-    df = LBD.GetLBDDimerMenu(cur)
+    df = LBD.GetLBDDimerMenu(api_url)
     Menu = []
     NameList = list(df.keys())
     length = len(NameList)
@@ -63,11 +64,11 @@ def ReadExcelLBDValue(cur):
         Menu.append(temp)
     return Menu
 
-def HtmlReturn(alpha,beta,cur):
+def HtmlReturn(alpha,beta,api_url):
     L = np.linspace(0.3, 10, 2000)
-    kd_values = ReadExcelKdValue(cur)
-    kd_labels = ReadExcelKdLabel(cur)
-    LBD_parameters = ReadExcelLBDValue(cur)
+    kd_values = ReadExcelKdValue(api_url)
+    kd_labels = ReadExcelKdLabel(api_url)
+    LBD_parameters = ReadExcelLBDValue(api_url)
     # kd_values = [6.216347694,	40.97704697,	5.374494076,	0.745553315,	1.445352554,	5.066512585	,2.956590891,	0.607055765,	1.13083303,30.08697891,0.343528478,	0.102414004]
     # kd_labels = ['CI434',         'LexAs5',       'LexAs17',      'LexA87',        'LexAs23',       'HKCI',     'RecApact', 'DeoR',           'PurR',   'CI',	   'LexAs15',       'LexAs14']
 

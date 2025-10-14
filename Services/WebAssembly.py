@@ -1,4 +1,5 @@
 import sys
+sys.path.append("/home/database/TFDesignWeb/Services")
 import os
 # from GGModule.SupportGG import SupportGG
 from GGModule.SupportGG import SupportGG
@@ -18,19 +19,18 @@ from six.moves import urllib
 
 DOWNLOAD_FILEADDRESS = "/home/database/WebPlot/UPLOAD_FOLDER/SequenceFile"
 class WebAssembly:
-    def __init__(self,LBD,DBD,L,DA):
-        self.DA = DA
-        self.LBD = GetPartByName(LBD,self.DA.GetCursor())
-        self.DBD = GetPartByName(DBD,self.DA.GetCursor())
+    def __init__(self,LBD,DBD,L,api_url,session):
+        self.LBD = GetPartByName(api_url,LBD,session)
+        self.DBD = GetPartByName(api_url,DBD,session)
         # self.Level2Backbone = "CY571"
-        self.Level2Backbone = GetBackbone("CY571",self.DA.GetCursor())
+        self.Level2Backbone = GetBackbone(api_url,"CY571")
         # self.Level3Backbone = "CY1809"
-        self.Level3Backbone = GetBackbone("CY1809",self.DA.GetCursor())
+        self.Level3Backbone = GetBackbone(api_url,"CY1809")
         self.L = L
         # self.promoter = "pxyluas"
         # self.Terminator = "TER25"
         # self.AD = "AD"
-        self.AD = GetPartByName("AD",self.DA.GetCursor())
+        self.AD = GetPartByName(api_url,"AD",session)
 
 
     def CaculatePT(self):

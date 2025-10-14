@@ -15,10 +15,10 @@ from Entity.Terminator import GetTerminatorList
 
 
 class Caculate:
-    def __init__(self,c,result):
-        self.c = c
-        self.promoter = GetPromoterList(self.c)
-        self.terminator = GetTerminatorList(self.c)
+    def __init__(self,api_url,result):
+        self.api_url = api_url
+        self.promoter = GetPromoterList(self.api_url)
+        self.terminator = GetTerminatorList(self.api_url)
         self.result = result
 
     # def GetPromoter(self):
