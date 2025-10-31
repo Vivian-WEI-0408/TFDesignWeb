@@ -58,6 +58,8 @@ global session
 #         return f"{response.text}"
 #     except requests.exceptions.ConnectionError:
 #         return False
+def getsession():
+    return session
 @app.route("/Opt",methods=['POST'])
 def Opt():
     alpha = flask.request.form.get('alpha')
@@ -75,8 +77,7 @@ def bkapp_page():
         # response = requests.post(f'{app.config["api_url"]}login')
         # print(f'{app.config["api_url"]}login')
         session = requests.Session()
-        # print("AAAAAAA")
-        respoonse = session.get(f'{app.config["api_url"]}login')
+        response = session.get(f'{app.config["api_url"]}login')
         csrf_token = session.cookies.get('csrftoken')
         loginfo = {'uname':'root','password':'chenlab','csrfmiddlewaretoken': csrf_token}
         headers = {'Referer':f'{app.config["api_url"]}login','X-CSRFToken':csrf_token}

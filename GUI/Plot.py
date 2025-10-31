@@ -1,11 +1,12 @@
+import sys
+sys.path.append('..')
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.models import Row,Column,widgets,ColumnDataSource,Slider,InlineStyleSheet
 from bokeh.plotting import figure
 from Entity.DBD import GetDBDMenu,GetDBDNameList
 from Entity.LBD import GetLBDDimerMenu,GetLBDNRMenu,GetLBDDimerNameList,GetLBDNRNameList
-
-
+import requests
 
 #下游启动子输出
 def DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0):
@@ -19,22 +20,29 @@ def DimerModelCaculate(k1,k2,k3,I,L,Imax,kd,I0):
 #     P1 = (Imax * ((L / 2) * ((x1 - (k2*I+kx1+kx2*k2*I+1)) / (x1 + (k2*I+kx1+kx2*k2*I+1))) * kd / (1 + (L / 2) * ((x1 - (k2*I+kx1+kx2*k2*I+1)) / (x1 + (k2*I+kx1+kx2*k2*I+1))) *kd)) + I0)
 #     return P1
 
+api_url =  'http://10.30.76.2:8000/WebDatabase/'
+session = requests.Session()
+response = session.get(f'{api_url}login')
+csrf_token = session.cookies.get('csrftoken')
+loginfo = {'uname':'root','password':'chenlab','csrfmiddlewaretoken': csrf_token}
+headers = {'Referer':f'{api_url}login','X-CSRFToken':csrf_token}
+response = session.post(f'{api_url}login',data=loginfo,headers=headers)
 
-def ReadExcel(Type,cur):
+def ReadExcel(Type):
     if(Type == "LBDDimer"):
-        return GetLBDDimerMenu(cur)
+        return GetLBDDimerMenu(api_url,session)
     elif(Type == "LBDNR"):
-        return GetLBDNRMenu(cur)
+        return GetLBDNRMenu(api_url,session)
     elif(Type == "DBD"):
-        return GetDBDMenu(cur)
+        return GetDBDMenu(api_url,session)
 
-def GetNameList(Type,cur):
+def GetNameList(Type):
     if(Type == "LBDDimer"):
-        return GetLBDDimerNameList(cur)
+        return GetLBDDimerNameList(api_url,session)
     elif(Type == "LBDNR"):
-        return GetLBDNRNameList(cur)
+        return GetLBDNRNameList(api_url,session)
     elif(Type == "DBD"):
-        return GetDBDNameList(cur)
+        return GetDBDNameList(api_url,session)
 
 
 def update_LBDDBDDimerData(attr,old,new):
@@ -143,10 +151,15 @@ def update_KdSlider_data(attrname,old,new):
     # source2.data = dict(Inducer = I, Output = y2)
 
 
-DataAccess = DA(host="10.30.76.2",user="WebUser",password="WebUser",database="labdnadata")
-LBDDimerMenu = ReadExcel("LBDDimer",DataAccess.GetCursor())
+
+# DataAccess = DA(host="10.30.76.2",user="WebUser",password="WebUser",database="labdnadata")
+
+LBDDimerMenu = ReadExcel("LBDDimer")
+
 # LBDNRMenu = ReadExcel("LBDNR",DataAccess.GetCursor())
-DBDMenu = ReadExcel("DBD",DataAccess.GetCursor())
+
+DBDMenu = ReadExcel("DBD")
+
 # LBDDimerMenu = ReadExcel("LBDDimer",DataAccess.Ge
 stylesheet = InlineStyleSheet(css="""
 .title{
@@ -260,9 +273,9 @@ TwinPlot.css_classes = ["plot"]
 LSlider = Slider(title='L',value=1.5,start=0,end=10,step=0.001,bar_color='rgb(115,143,193)')
 KdSlider = Slider(title='kd',value=6.216347694,start=0,end=41,step=0.001,bar_color='rgb(232,177,157)')
 
-DimerNameList = GetNameList("LBDDimer",DataAccess.GetCursor())
+DimerNameList = GetNameList("LBDDimer")
 # NRNameList = GetNameList("LBDNR",DataAccess.GetCursor())
-DBDNameList = GetNameList("DBD",DataAccess.GetCursor())
+DBDNameList = GetNameList("DBD")
 LBDDimerSelect = widgets.Select(title="Dimer LBD",value = DimerNameList[0],options=DimerNameList)
 # LBDNRSelect = widgets.Select(title = "NR LBD",value = NRNameList[0],options=NRNameList)
 DBDSelect = widgets.Select(title = "DBD",value = DBDNameList[0],options=DBDNameList)
